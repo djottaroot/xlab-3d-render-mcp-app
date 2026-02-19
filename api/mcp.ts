@@ -19,12 +19,25 @@ const mcpHandler = createMcpHandler(
 );
 
 const handler = async (request: Request) => {
-  const url = new URL(request.url);
-  if (url.pathname.startsWith("/api/")) {
-    url.pathname = url.pathname.replace("/api/", "/");
-    return mcpHandler(new Request(url.toString(), request));
+  try {
+    const url = new URL(request.url);
+    if (url.pathname.startsWith("/api/")) {
+      url.pathname = url.pathname.replace("/api/", "/");
+      return await mcpHandler(new Request(url.toString(), request));
+    }
+    return await mcpHandler(request);
+  } catch (error: any) {
+    console.error("[XLab 3D Render] Global Handler Error:", error);
+    return new Response(JSON.stringify({
+      error: "Internal Server Error",
+      message: error.message,
+      stack: error.stack,
+      note: "This is a debug response to identify the cause of the 500 error."
+    }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
   }
-  return mcpHandler(request);
 };
 
 export { handler as GET, handler as POST, handler as DELETE };
