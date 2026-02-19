@@ -2,11 +2,6 @@
   "buildCommand": "bun run build",
   "outputDirectory": ".",
   "cleanUrls": false,
-  "functions": {
-    "api/*.ts": {
-      "includeFiles": "dist/**"
-    }
-  },
   "rewrites": [
     {
       "source": "/mcp",
