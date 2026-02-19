@@ -15,7 +15,11 @@ const mcpHandler = createMcpHandler(
     }
   },
   { serverInfo: { name: "XLab 3D Render", version: "1.0.0" } },
-  { basePath: "", maxDuration: 60, sessionIdGenerator: undefined },
+  {
+    basePath: "/api",
+    maxDuration: 60,
+    verboseLogs: true,
+  },
 );
 
 const handler = async (request: Request) => {

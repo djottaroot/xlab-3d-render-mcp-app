@@ -6,26 +6,26 @@ import path from "node:path";
 import { z } from "zod";
 import crypto from "node:crypto";
 import { RECALL_CHEAT_SHEET } from "./utils.js";
-import { MemoryCheckpointStore, type CheckpointStore } from "./checkpoint-store.js";
+import { RedisCheckpointStore, MemoryCheckpointStore, type CheckpointStore } from "./checkpoint-store.js";
 
 const DIST_DIR = import.meta.filename.endsWith(".ts")
   ? path.join(import.meta.dirname, "..", "dist")
   : import.meta.dirname;
 
 // Initialize Checkpoint Store lazily
-const store: CheckpointStore | null = MemoryCheckpointStore.getInstance();
-// function getStore(): CheckpointStore {
-//   if (store) return store;
+let store: CheckpointStore | null = null;
+function getStore(): CheckpointStore {
+  if (store) return store;
 
-//   console.log("[3D-Render] Initializing RedisCheckpointStore");
-//   store = MemoryCheckpointStore.getInstance();
+  console.log("[3D-Render] Initializing RedisCheckpointStore");
+  store = RedisCheckpointStore.getInstance();
 
-//   if (!store) {
-//     console.warn("[3D-Render] Using MemoryCheckpointStore (Redis credentials missing)");
-//     store = MemoryCheckpointStore.getInstance();
-//   }
-//   return store;
-// }
+  if (!store) {
+    console.warn("[3D-Render] Using MemoryCheckpointStore (Redis credentials missing)");
+    store = MemoryCheckpointStore.getInstance();
+  }
+  return store;
+}
 
 /**
  * Registers 3D Render tools and resources with the MCP server.
@@ -82,7 +82,7 @@ Call 3d_read_me first to learn the element format.`,
 
       if (restoreEl?.id) {
         console.log(`[3D-Render] Restoring checkpoint: ${restoreEl.id}`);
-        const base = await store?.load(restoreEl.id);
+        const base = await getStore().load(restoreEl.id);
         if (!base) {
           console.warn(`[3D-Render] Checkpoint not found: ${restoreEl.id}`);
           return {
@@ -107,7 +107,7 @@ Call 3d_read_me first to learn the element format.`,
 
       const checkpointId = crypto.randomUUID().replace(/-/g, "").slice(0, 18);
       console.log(`[3D-Render] Saving new checkpoint: ${checkpointId}`);
-      await store?.save(checkpointId, { elements: resolvedElements });
+      await getStore().save(checkpointId, { elements: resolvedElements });
 
 
       return {
@@ -129,7 +129,7 @@ Call 3d_read_me first to learn the element format.`,
     },
     async ({ id }) => {
       console.log(`[3D-Render] Reading checkpoint: ${id}`);
-      const data = await store?.load(id);
+      const data = await getStore().load(id);
       return { content: [{ type: "text", text: JSON.stringify(data || { elements: [] }) }] };
     }
   );
@@ -141,7 +141,7 @@ Call 3d_read_me first to learn the element format.`,
     },
     async ({ id, elements }) => {
       console.log(`[3D-Render] Saving checkpoint manually: ${id}`);
-      await store?.save(id, { elements });
+      await getStore().save(id, { elements });
       return { content: [{ type: "text", text: "Saved" }] };
     }
   );
