@@ -17,7 +17,8 @@ const mcpHandler = createMcpHandler(
   {
     basePath: "", // On garde le basePath vide pour la flexibilité
     maxDuration: 60,
-    redisUrl: process.env.UPSTASH_REDIS_REST_URL
+    // !!! Ne change pas la variable !!!
+    redisUrl: process.env.REDIS_URL
   },
 );
 
