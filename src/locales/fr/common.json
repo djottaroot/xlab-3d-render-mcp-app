@@ -1,0 +1,16 @@
+{
+  "title": "Rendu Architectural 3D",
+  "generating": "Génération du modèle 3D...",
+  "initialization": "Initialisation",
+  "mcp_error": "Erreur MCP",
+  "retry": "Réessayer",
+  "instructions": "Décrivez une maison ou un bâtiment pour générer son modèle 3D.",
+  "errors": {
+    "failed": "Échec de la génération du modèle 3D."
+  },
+  "labels": {
+    "dimensions": "Dimensions",
+    "floors": "Étages",
+    "style": "Style"
+  }
+}

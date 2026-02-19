@@ -1,0 +1,16 @@
+{
+  "title": "3D Architectural Render",
+  "generating": "Generating 3D model...",
+  "initialization": "Initialization",
+  "mcp_error": "MCP Error",
+  "retry": "Retry",
+  "instructions": "Describe a house or building to generate its 3D model.",
+  "errors": {
+    "failed": "Failed to generate 3D model."
+  },
+  "labels": {
+    "dimensions": "Dimensions",
+    "floors": "Floors",
+    "style": "Style"
+  }
+}
