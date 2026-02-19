@@ -82,7 +82,7 @@ Call 3d_read_me first to learn the element format.`,
 
       if (restoreEl?.id) {
         console.log(`[3D-Render] Restoring checkpoint: ${restoreEl.id}`);
-        const base = store?.load(restoreEl.id);
+        const base = await store?.load(restoreEl.id);
         if (!base) {
           console.warn(`[3D-Render] Checkpoint not found: ${restoreEl.id}`);
           return {
@@ -107,7 +107,7 @@ Call 3d_read_me first to learn the element format.`,
 
       const checkpointId = crypto.randomUUID().replace(/-/g, "").slice(0, 18);
       console.log(`[3D-Render] Saving new checkpoint: ${checkpointId}`);
-      store?.save(checkpointId, { elements: resolvedElements });
+      await store?.save(checkpointId, { elements: resolvedElements });
 
 
       return {
@@ -129,7 +129,7 @@ Call 3d_read_me first to learn the element format.`,
     },
     async ({ id }) => {
       console.log(`[3D-Render] Reading checkpoint: ${id}`);
-      const data = store?.load(id);
+      const data = await store?.load(id);
       return { content: [{ type: "text", text: JSON.stringify(data || { elements: [] }) }] };
     }
   );
@@ -141,7 +141,7 @@ Call 3d_read_me first to learn the element format.`,
     },
     async ({ id, elements }) => {
       console.log(`[3D-Render] Saving checkpoint manually: ${id}`);
-      store?.save(id, { elements });
+      await store?.save(id, { elements });
       return { content: [{ type: "text", text: "Saved" }] };
     }
   );
