@@ -8,11 +8,7 @@
       "destination": "/api/mcp"
     },
     {
-      "source": "/sse",
-      "destination": "/api/mcp"
-    },
-    {
-      "source": "/message",
+      "source": "/mcp/(.*)",
       "destination": "/api/mcp"
     }
   ],
