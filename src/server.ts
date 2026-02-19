@@ -8,9 +8,9 @@ import { z } from "zod";
 import { RECALL_CHEAT_SHEET } from "./utils.js";
 import { RedisCheckpointStore, MemoryCheckpointStore, type CheckpointStore } from "./checkpoint-store.js";
 
-const DIST_DIR = (import.meta as any).filename?.endsWith(".ts")
-  ? path.join((import.meta as any).dirname, "..", "dist")
-  : (import.meta as any).dirname || process.cwd();
+const DIST_DIR = import.meta.filename.endsWith(".ts")
+  ? path.join(import.meta.dirname, "..", "dist")
+  : import.meta.dirname;
 
 // Initialize Checkpoint Store lazily
 let store: CheckpointStore | null = null;
@@ -155,29 +155,22 @@ Call 3d_read_me first to learn the element format.`,
     async (): Promise<ReadResourceResult> => {
       const pathsToTry = [
         path.join(distDir, "mcp-app.html"),
-        path.join(distDir, "src", "mcp-app.html"),
-        path.join(process.cwd(), "dist", "mcp-app.html"),
-        path.join(process.cwd(), "mcp-app.html"),
+        path.join(distDir, "src", "mcp-app.html")
       ];
 
       let html = "";
       for (const p of pathsToTry) {
         try {
           html = await fs.readFile(p, "utf-8");
-          console.log(`[3D-Render] Successfully read mcp-app.html from: ${p}`);
           break;
         } catch (e) {
-          console.log(`[3D-Render] Checked path ${p}: Not found`);
           continue;
         }
       }
 
       if (!html) {
-        const error = `Could not find mcp-app.html in any of: ${pathsToTry.join(", ")}`;
-        console.error(`[3D-Render] ${error}`);
-        throw new Error(error);
+        throw new Error(`Could not find mcp-app.html in any of: ${pathsToTry.join(", ")}`);
       }
-
       return {
         contents: [{
           uri: resourceUri,
