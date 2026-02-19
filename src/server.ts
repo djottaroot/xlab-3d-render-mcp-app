@@ -3,8 +3,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult, ReadResourceResult } from "@modelcontextprotocol/sdk/types.js";
 import fs from "node:fs/promises";
 import path from "node:path";
-import crypto from "node:crypto";
 import { z } from "zod";
+import crypto from "node:crypto";
 import { RECALL_CHEAT_SHEET } from "./utils.js";
 import { RedisCheckpointStore, MemoryCheckpointStore, type CheckpointStore } from "./checkpoint-store.js";
 
@@ -33,7 +33,7 @@ function getStore(): CheckpointStore {
  * Registers 3D Render tools and resources with the MCP server.
  */
 export function registerTools(server: McpServer, distDir: string): void {
-  const resourceUri = "ui://3d-render/mcp-app.html";
+  const resourceUri = "ui://xlab-3d-render/mcp-app.html";
 
   // 1. 3d_read_me tool
   server.registerTool(
@@ -115,7 +115,7 @@ Call 3d_read_me first to learn the element format.`,
       return {
         content: [{
           type: "text",
-          text: `3D Scene updated! Checkpoint ID: "${checkpointId}".\nTo modify this scene, use: [{"type":"restoreCheckpoint","id":"${checkpointId}"}, ...]`
+          text: JSON.stringify({ checkpointId, elements: resolvedElements, camera: cameraArg })
         }],
         structuredContent: { checkpointId, elements: resolvedElements, camera: cameraArg },
       };
@@ -193,7 +193,7 @@ Call 3d_read_me first to learn the element format.`,
  */
 export function createServer(): McpServer {
   const server = new McpServer({
-    name: "3D-Render",
+    name: "XLab 3D Render",
     version: "1.0.0",
   });
 

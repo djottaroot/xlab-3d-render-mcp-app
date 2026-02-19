@@ -10,5 +10,5 @@
     "resolveJsonModule": true,
     "types": ["node"]
   },
-  "include": ["src/server.ts", "src/main.ts", "src/jscad.d.ts", "api/mcp.ts"]
+  "include": ["src/server.ts", "src/main.ts"]
 }

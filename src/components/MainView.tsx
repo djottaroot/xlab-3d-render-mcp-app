@@ -1,7 +1,6 @@
 import { Loader, Sun, Moon } from "lucide-react";
 import { Renderer3D } from "./Renderer3D.tsx";
 import { useTranslation } from "react-i18next";
-import pkg from "../../package.json";
 
 interface MainViewProps {
   theme: 'dark' | 'light';
@@ -88,7 +87,7 @@ export function MainView({
               <span className={`font-bold uppercase tracking-widest text-[8px] transition-colors ${theme === 'dark' ? 'text-zinc-600 group-hover:text-zinc-400' : 'text-zinc-400 group-hover:text-zinc-600'}`}>Auto-Rotate</span>
             </label>
             <div className={`font-bold uppercase tracking-widest text-[8px] ${theme === 'dark' ? 'text-zinc-800' : 'text-zinc-300'}`}>
-              v{pkg.version}
+              v1.0.0
             </div>
           </div>
         </footer>

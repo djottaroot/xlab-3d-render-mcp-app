@@ -1,4 +1,4 @@
-# 3D Architectural Render MCP App
+# XLab 3D Render MCP App
 
 A high-performance, aesthetically pleasing 3D architectural rendering application built as a Model Context Protocol (MCP) server. This app allows AI agents to generate, manipulate, and visualize 3D scenes using simple primitives through a streamlined communication bridge.
 

@@ -4,10 +4,14 @@ import { registerTools } from "../src/server.js";
 
 const mcpHandler = createMcpHandler(
   (server) => {
-    const distDir = path.join(process.cwd(), "dist");
-    registerTools(server, distDir);
+    try {
+      const distDir = path.join(process.cwd(), "dist");
+      registerTools(server, distDir);
+    } catch (error) {
+      console.error("[XLab 3D Render] Fatal error during registerTools:", error);
+    }
   },
-  { serverInfo: { name: "3D-Render", version: "1.0.0" } },
+  { serverInfo: { name: "XLab 3D Render", version: "1.0.0" } },
   { basePath: "", maxDuration: 60, sessionIdGenerator: undefined },
 );
 

@@ -1,12 +1,12 @@
 {
-  "name": "@djotta/3d-render-mcp",
+  "name": "xlab-3d-render-mcp-app",
   "version": "1.0.0",
   "type": "module",
   "description": "3D Architectural Render MCP App using Three.js and JSCAD",
   "license": "MIT",
   "main": "dist/server.js",
   "bin": {
-    "3d-render-mcp": "dist/index.js"
+    "xlab-3d-render-mcp-app": "dist/index.js"
   },
   "scripts": {
     "build": "tsc --noEmit && cross-env INPUT=src/mcp-app.html vite build && mv dist/src/mcp-app.html dist/mcp-app.html && rmdir dist/src && tsc -p tsconfig.server.json && bun build src/server.ts --outdir dist --target node && bun build src/main.ts --outfile dist/index.js --target node --banner \"#!/usr/bin/env node\"",

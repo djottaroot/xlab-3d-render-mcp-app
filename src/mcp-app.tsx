@@ -22,37 +22,34 @@ function App() {
   const [cameraTarget, setCameraTarget] = useState<any>(null);
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
 
-  /**
-   * Returns agent name and label based on the tool being executed.
-   */
-  const getAgentInfo = (toolName: string) => {
-    let name = '🤖 @Sarki';
-    let label = toolName;
-
-    switch (toolName.toLocaleLowerCase()) {
-      case '3d_render_scene':
-        name = '🤖 @DaVinci';
-        label = '3D Scene';
-        break;
-      case 'read_checkpoint':
-      case 'save_checkpoint':
-        name = '🤖 @Picasso';
-        label = toolName === 'read_checkpoint' ? 'Lecture' : 'Sauvegarde';
-        break;
-    }
-    return { name, label };
-  };
-
-  const { app } = useApp({
-    appInfo: { name: "3D-Render", version: "1.0.0" },
+  const { app, error } = useApp({
+    appInfo: { name: "xlab-3d-render-mcp-app", version: "1.0.0" },
     capabilities: {},
     onAppCreated: (app) => {
+      const getAgentInfo = (toolName: string) => {
+        let name = '🤖 @Sarki';
+        let label = toolName;
+
+        switch (toolName.toLocaleLowerCase()) {
+          case '3d_render_scene':
+            name = '🤖 @DaVinci';
+            label = '3D Scene';
+            break;
+          case 'read_checkpoint':
+          case 'save_checkpoint':
+            name = '🤖 @Picasso';
+            label = toolName === 'read_checkpoint' ? 'Lecture' : 'Sauvegarde';
+            break;
+        }
+        return { name, label };
+      };
+
       const restoreCheckpoint = async (elementsStr: string) => {
         try {
           const parsed = JSON.parse(elementsStr);
           const restoreEl = parsed.find((el: any) => el.type === "restoreCheckpoint");
           if (restoreEl?.id) {
-            // @ts-ignore - callTool is usually available via bridge
+            // @ts-ignore - callTool is available via bridge
             const result = await app.callTool("3d_read_checkpoint", { id: restoreEl.id });
             const content = (result as any)?.content?.[0]?.text;
             if (content) {
@@ -84,7 +81,21 @@ function App() {
       app.ontoolresult = (result) => {
         setLoading(false);
 
-        const data = (result as any)?.structuredContent;
+        // Try structured content first
+        let data = (result as any)?.structuredContent;
+
+        // Fallback to parsing text content like Tic-Tac-Toe
+        if (!data) {
+          const content = (result as any)?.content?.[0]?.text;
+          if (content) {
+            try {
+              data = JSON.parse(content);
+            } catch (e) {
+              console.error("[3D-Render] Failed to parse tool result content:", e);
+            }
+          }
+        }
+
         if (data?.elements) {
           setElements(data.elements);
         }
@@ -98,7 +109,24 @@ function App() {
     },
   });
 
-  // if (error) return <ErrorScreen message={error.message} theme={theme} onRetry={() => window.location.reload()} />;
+  if (error) return (
+    <div className="flex flex-col items-center justify-center h-screen w-full bg-transparent text-white p-8 animate-in fade-in duration-700">
+      <div className="glass-effect p-8 rounded-5xl flex flex-col items-center gap-6 max-w-sm text-center shadow-2xl border border-red-500/20">
+        <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 text-2xl font-bold">!</div>
+        <div className="space-y-2">
+          <h1 className="text-2xl font-black tracking-tight">{t('mcp_error')}</h1>
+          <p className="text-zinc-400 font-medium text-sm leading-relaxed lowercase">{error.message}</p>
+        </div>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-8 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-2xl font-bold transition-all duration-300 hover:scale-105"
+        >
+          {t('retry')}
+        </button>
+      </div>
+    </div>
+  );
+
   if (!app) return <LoadingScreen theme={theme} label={t('initialization')} />;
 
   return (
