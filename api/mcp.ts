@@ -6,48 +6,38 @@ import { fileURLToPath } from "node:url";
 const mcpHandler = createMcpHandler(
   (server) => {
     try {
-      // Chemin robuste pour Vercel
       const __dirname = path.dirname(fileURLToPath(import.meta.url));
       const distDir = path.resolve(__dirname, "../dist");
-      console.log("[XLab 3D Render] Registering tools with distDir:", distDir);
       registerTools(server, distDir);
     } catch (error) {
-      console.error("[XLab 3D Render] Fatal error during registerTools:", error);
+      console.error("[3D-Render] Error during registerTools:", error);
     }
   },
   { serverInfo: { name: "XLab-3D-Render", version: "1.0.0" } },
   {
-    basePath: "/mcp",
+    basePath: "", // On garde le basePath vide pour la flexibilité
     maxDuration: 60,
-    redisUrl: process.env.REDIS_URL
+    redisUrl: process.env.UPSTASH_REDIS_REST_URL
   },
 );
 
 const handler = async (request: Request) => {
-  try {
-    const url = new URL(request.url);
+  const url = new URL(request.url);
 
-    // Support des deux chemins : direct (/mcp) et via rewrite (/api/mcp)
-    if (url.pathname === "/api/mcp" || url.pathname.startsWith("/api/mcp/")) {
-      url.pathname = url.pathname.replace("/api/mcp", "/mcp");
-    } else if (url.pathname === "/api" || url.pathname.startsWith("/api/")) {
-      // Cas générique pour rester compatible avec le template
-      url.pathname = url.pathname.replace("/api", "/mcp");
-    }
-
-    return await mcpHandler(new Request(url.toString(), request));
-  } catch (error: any) {
-    console.error("[XLab 3D Render] Global Handler Error:", error);
-    return new Response(JSON.stringify({
-      error: "Internal Server Error",
-      message: error.message,
-      stack: error.stack,
-      path: new URL(request.url).pathname
-    }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
-    });
+  // Normalisation de l'URL pour mcp-handler
+  // Si on arrive via /mcp ou /api/mcp, on nettoie pour que mcp-handler voie "/"
+  if (url.pathname.startsWith("/api/mcp")) {
+    url.pathname = url.pathname.replace("/api/mcp", "");
+  } else if (url.pathname.startsWith("/mcp")) {
+    url.pathname = url.pathname.replace("/mcp", "");
+  } else if (url.pathname.startsWith("/api")) {
+    url.pathname = url.pathname.replace("/api", "");
   }
+
+  // S'assurer que le pathname n'est pas vide
+  if (url.pathname === "") url.pathname = "/";
+
+  return mcpHandler(new Request(url.toString(), request));
 };
 
 export { handler as GET, handler as POST, handler as DELETE };
