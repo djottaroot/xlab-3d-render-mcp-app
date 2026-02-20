@@ -8,13 +8,14 @@ interface Renderer3DProps {
   cameraTarget?: { position: [number, number, number], target?: [number, number, number] };
   autoRotate?: boolean;
   theme?: 'dark' | 'light';
+  onInteraction?: () => void;
 }
 
 /**
  * 3D Renderer component using Three.js.
  * Manages the scene, camera, lighting, and element rendering logic.
  */
-export function Renderer3D({ elements, cameraTarget, autoRotate = true, theme = 'dark' }: Renderer3DProps) {
+export function Renderer3D({ elements, cameraTarget, autoRotate = true, theme = 'dark', onInteraction }: Renderer3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const objectsRef = useRef<Map<string, THREE.Object3D>>(new Map());
   const placeholderRef = useRef<THREE.Sprite | null>(null);
@@ -62,6 +63,7 @@ export function Renderer3D({ elements, cameraTarget, autoRotate = true, theme = 
     const onStart = () => {
       hasInteractedRef.current = true;
       controls.autoRotate = false;
+      onInteraction?.();
     };
     controls.addEventListener("start", onStart);
 

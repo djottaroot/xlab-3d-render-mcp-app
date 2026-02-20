@@ -140,6 +140,7 @@ function App() {
       setAutoRotateEnabled={setAutoRotateEnabled}
       cameraTarget={cameraTarget}
       setCameraTarget={setCameraTarget}
+      onInteraction={() => setAutoRotateEnabled(false)}
     />
   );
 }

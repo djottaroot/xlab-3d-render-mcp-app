@@ -14,6 +14,7 @@ interface MainViewProps {
   setAutoRotateEnabled: (enabled: boolean) => void;
   cameraTarget: any;
   setCameraTarget: (target: any) => void;
+  onInteraction?: () => void;
 }
 
 /**
@@ -30,7 +31,8 @@ export function MainView({
   autoRotateEnabled,
   setAutoRotateEnabled,
   cameraTarget,
-  setCameraTarget
+  setCameraTarget,
+  onInteraction
 }: MainViewProps) {
   const { t } = useTranslation('common');
 
@@ -44,7 +46,7 @@ export function MainView({
         <div className="flex items-center gap-2">
           <span className={`font-black tracking-tight text-xs ${theme === 'dark' ? 'text-zinc-100' : 'text-zinc-900'}`}>{agentInfo.name}</span>
           <span className="text-zinc-500 opacity-50">-</span>
-          <span className={`font-bold tracking-widest uppercase text-[9px] ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-500'}`}>{agentInfo.label}</span>
+          <span className={`font-bold tracking-widest text-[9px] ${theme === 'dark' ? 'text-zinc-400' : 'text-zinc-500'}`}>{agentInfo.label}</span>
         </div>
         <div className="flex items-center gap-3">
           {checkpointId && (
@@ -67,15 +69,15 @@ export function MainView({
           autoRotate={autoRotateEnabled}
           cameraTarget={cameraTarget}
           theme={theme}
+          onInteraction={onInteraction}
         />
       </main>
 
       <footer className={`px-4 py-2 ${theme === 'dark' ? 'bg-zinc-950/90 border-white/10' : 'bg-white/95 border-zinc-200'} backdrop-blur-xl border-t flex items-center justify-between shrink-0 shadow-lg transition-colors duration-500`}>
         <div className="flex gap-4">
-          <ParamItem label="Elements" value={elements.length} theme={theme} />
           <ParamItem label="Status" value="Live" theme={theme} active />
         </div>
-        <div className="flex items-center gap-1.5 p-1 bg-zinc-500/5 rounded-xl border border-white/5">
+        <div className="flex items-center gap-1.5 p-1">
           <ControlButton
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
@@ -129,11 +131,11 @@ function ControlButton({
     <button
       onClick={onClick}
       className={`p-2 rounded-lg transition-all duration-300 flex items-center justify-center
-        ${active
-          ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
-          : theme === 'dark'
-            ? 'text-zinc-400 hover:bg-white/10 hover:text-zinc-100'
-            : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900'
+        ${active 
+          ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' 
+          : theme === 'dark' 
+            ? 'text-zinc-200 hover:bg-white/15 hover:text-white' 
+            : 'text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900'
         }`}
       title={title}
     >
